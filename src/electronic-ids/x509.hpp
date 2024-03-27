@@ -45,11 +45,13 @@ inline CertificateType certificateType(const pcsc_cpp::byte_vector& cert)
 
     static const int KEY_USAGE_DIGITAL_SIGNATURE = 0;
     if (ASN1_BIT_STRING_get_bit(keyUsage.get(), KEY_USAGE_DIGITAL_SIGNATURE)) {
-        auto extKeyUsage =
+        return CertificateType::AUTHENTICATION;
+        // Luxtrust doesn't have ext key usage
+        /*auto extKeyUsage =
             SCOPE_GUARD(EXTENDED_KEY_USAGE, extension(x509.get(), NID_ext_key_usage));
         if (extKeyUsage && hasClientAuthExtendedKeyUsage(extKeyUsage.get())) {
             return CertificateType::AUTHENTICATION;
-        }
+        }*/
     }
 
     return CertificateType::NONE;

@@ -71,6 +71,17 @@ inline fs::path lithuanianPKCS11ModulePath()
 #endif
 }
 
+inline fs::path luxtrustPkcs11ModulePath()
+{
+#ifdef _WIN32
+    return programFilesPath() / L"Gemalto/Classic Client/BIN/gclib.dll";
+#elif defined __APPLE__
+    return "/Library/Frameworks/Pkcs11ClassicClient.framework/Versions/A/Pkcs11ClassicClient/libgclib.dylib";
+#else // Linux TODO MIssing need to be checked and set the proper one
+    return "/usr/lib/x86_64-linux-gnu/gclib.so.0";
+#endif
+}
+
 inline fs::path croatianPkcs11ModulePath()
 {
 #ifdef _WIN32
@@ -175,6 +186,41 @@ const std::map<Pkcs11ElectronicIDType, Pkcs11ElectronicIDModule> SUPPORTED_PKCS1
          ElectronicID::Type::CzeEID, // type
          czechPkcs11ModulePath().make_preferred(), // path
 
+         JsonWebSignatureAlgorithm::RS256, // authSignatureAlgorithm
+         RSA_SIGNATURE_ALGOS(), // supportedSigningAlgorithms
+         3,
+         true,
+         false,
+     }},
+    {Pkcs11ElectronicIDType::LuxEID,
+     {
+         "Luxtrust eID (PKCS#11)"s, // name
+         ElectronicID::Type::LuxEID, // type
+         luxtrustPkcs11ModulePath().make_preferred(), // path
+
+         JsonWebSignatureAlgorithm::RS256, // authSignatureAlgorithm
+         RSA_SIGNATURE_ALGOS(), // supportedSigningAlgorithms
+         3,
+         true,
+         true,
+     }},
+    {Pkcs11ElectronicIDType::LuxtrustV3,
+     {
+         "Luxtrust eID (PKCS#11)"s, // name
+         ElectronicID::Type::LuxtrustV3, // type
+         luxtrustPkcs11ModulePath().make_preferred(), // path
+
+         JsonWebSignatureAlgorithm::RS256, // authSignatureAlgorithm
+         RSA_SIGNATURE_ALGOS(), // supportedSigningAlgorithms
+         3,
+         true,
+         true,
+     }},
+    {Pkcs11ElectronicIDType::LuxtrustV2,
+     {
+         "Luxtrust eID (PKCS#11)"s, // name
+         ElectronicID::Type::LuxtrustV2, // type
+         luxtrustPkcs11ModulePath().make_preferred(), // path
          JsonWebSignatureAlgorithm::RS256, // authSignatureAlgorithm
          RSA_SIGNATURE_ALGOS(), // supportedSigningAlgorithms
          3,
