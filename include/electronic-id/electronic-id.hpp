@@ -48,6 +48,9 @@ public:
         BelEIDV1_7,
         BelEIDV1_8,
         CzeEID,
+        LuxEID,
+        LuxtrustV3,
+        LuxtrustV2,
 #ifdef _WIN32
         MsCryptoApiEID,
 #endif
