@@ -77,8 +77,8 @@ inline fs::path luxtrustPkcs11ModulePath()
     return programFilesPath() / L"Gemalto/Classic Client/BIN/gclib.dll";
 #elif defined __APPLE__
     return "/Library/Frameworks/Pkcs11ClassicClient.framework/Versions/A/Pkcs11ClassicClient/libgclib.dylib";
-#else // Linux TODO MIssing need to be checked and set the proper one
-    return "/usr/lib/x86_64-linux-gnu/gclib.so.0";
+#else // Linux
+    return "/usr/lib/pkcs11/libgclib.so";
 #endif
 }
 
