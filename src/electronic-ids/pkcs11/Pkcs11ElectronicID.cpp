@@ -103,6 +103,17 @@ inline fs::path czechPkcs11ModulePath()
 #endif
 }
 
+inline fs::path luxembourgPkcs11ModulePath()
+{
+#ifdef _WIN32
+    return programFilesPath() / L"Gemalto/Classic Client/BIN/gclib.dll";
+#elif defined __APPLE__
+    return "/Library/Frameworks/Pkcs11ClassicClient.framework/Versions/A/Pkcs11ClassicClient/libgclib.dylib";
+#else // Linux
+    return "/usr/lib/pkcs11/libgclib.so";
+#endif
+}
+
 const std::map<ElectronicID::Type, Pkcs11ElectronicIDModule> SUPPORTED_PKCS11_MODULES {
     // EstEID configuration is here only for testing,
     // it is not enabled in getElectronicID().
@@ -156,6 +167,26 @@ const std::map<ElectronicID::Type, Pkcs11ElectronicIDModule> SUPPORTED_PKCS11_MO
          true,
          false,
      }},
+     {ElectronicID::Type::LuxtrustV2,
+      {
+          "LuxtrustV2 eID (PKCS#11)"s, // name
+          ElectronicID::Type::LuxtrustV2, // type
+          luxembourgPkcs11ModulePath().make_preferred(), // path
+
+          3,
+          true,
+          false,
+      }},
+     {ElectronicID::Type::LuxEID,
+      {
+          "Luxembourg eID (PKCS#11)"s, // name
+          ElectronicID::Type::LuxEID, // type
+          luxembourgPkcs11ModulePath().make_preferred(), // path
+
+          3,
+          true,
+          true,
+      }},
 };
 
 const Pkcs11ElectronicIDModule& getModule(ElectronicID::Type eidType)
@@ -180,7 +211,10 @@ Pkcs11ElectronicID::Pkcs11ElectronicID(ElectronicID::Type type) :
     bool seenSigningToken = false;
 
     for (const auto& token : manager->tokens()) {
-        const auto certType = certificateType(token.cert);
+        const auto certType = (type == ElectronicID::Type::LuxtrustV2 || type == ElectronicID::Type::LuxEID)
+            ? luxembourgCertificateType(token.cert)
+            : certificateType(token.cert);
+
         if (certType.isAuthentication()) {
             authToken = token;
             seenAuthToken = true;

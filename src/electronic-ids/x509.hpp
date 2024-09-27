@@ -61,6 +61,22 @@ inline CertificateType certificateType(const pcsc_cpp::byte_vector& cert)
     return CertificateType::NONE;
 }
 
+inline CertificateType luxembourgCertificateType(const pcsc_cpp::byte_vector& cert)
+{
+    auto x509 = make_x509(cert);
+    auto keyUsage = extension(x509.get(), NID_key_usage, ASN1_BIT_STRING_free);
+    if (!keyUsage) {
+        return CertificateType::NONE;
+    }
+
+    static const int KEY_USAGE_DIGITAL_SIGNATURE = 0;
+    if (ASN1_BIT_STRING_get_bit(keyUsage.get(), KEY_USAGE_DIGITAL_SIGNATURE)) {
+        return CertificateType::AUTHENTICATION;
+    }
+
+    return CertificateType::NONE;
+}
+
 inline JsonWebSignatureAlgorithm getAuthAlgorithmFromCert(const pcsc_cpp::byte_vector& cert)
 {
     auto x509 = make_x509(cert);
